@@ -132,9 +132,9 @@
   .teaser .ov .tags{margin-top:7px}
   .tag{font-size:9.5px;font-weight:800;letter-spacing:.2px;padding:3px 7px;border-radius:var(--r-pill);background:rgba(255,255,255,.16);color:#eef1ff;border:1px solid rgba(255,255,255,.18);white-space:nowrap;transition:.18s}
   .tag.match{background:var(--good);color:#06251a;border-color:transparent;box-shadow:0 0 10px rgba(70,224,168,.5)}
-  .salle .tags{margin:2px 0 12px}
-  .salle .tag{background:var(--navy-3);color:var(--gold-soft);border-color:var(--line)}
-  .salle.over .tag.match,.salle .tag.match{background:var(--good);color:#06251a;border-color:transparent}
+  .salle .say{font-size:12.5px;line-height:1.5;color:var(--muted);font-style:italic;margin:4px 0 12px}
+  .salle .say .kw{font-style:normal;font-weight:800;color:var(--gold-soft);border-radius:5px;padding:0 3px;transition:.2s}
+  .salle .say .kw.match{color:#06251a;background:var(--good);box-shadow:0 0 10px rgba(70,224,168,.45)}
   .teaser .grab-hint{position:absolute;top:9px;right:9px;z-index:2;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:rgba(9,15,40,.6);backdrop-filter:blur(4px);opacity:0;transition:.2s}
   .teaser:hover .grab-hint{opacity:1}
   .teaser .grab-hint svg{width:14px;height:14px;color:#fff}
@@ -403,12 +403,17 @@ const FILMS = [
   { id:"contrejour", title:"À contre-jour",         genre:"Thriller · 1h27",    badge:"Long-métrage", img:IMG("1509248961158-e54f6934749c"), tags:["adulte","moderne","engage"] },
   { id:"vagues",     title:"Le bruit des vagues",   genre:"Romance · 18min",    badge:"Court", img:IMG("1505118380757-91f5f5632de0"), tags:["famille","jeune","moderne","feelgood","court"] },
 ];
+// Chaque salle "parle" : `say` est la phrase vivante, découpée en bouts.
+// Un bout {t:"..."} est lié à un tag → il se colore en vert quand le film sélectionné le possède.
 const SALLES = [
-  { id:"rex",      name:"Le Rex",      icon:"i-film",     line:"Art & essai · films d'auteur", likes:["auteur","engage","curieux","adulte"] },
-  { id:"famille",  name:"Ciné Famille",icon:"i-building", line:"Familial · grand public",      likes:["famille","feelgood","grandpublic"] },
-  { id:"entracte", name:"L'Entracte",  icon:"i-sparkles", line:"Jeune public · étudiant",      likes:["jeune","moderne","court","engage"] },
+  { id:"rex", name:"Le Rex", icon:"i-film", likes:["auteur","engage","curieux","adulte"],
+    say:["Je vibre pour les films ",{t:"auteur",w:"d'auteur"}," et ",{t:"engage",w:"engagés"},", devant un public ",{t:"adulte",w:"adulte"}," et ",{t:"curieux",w:"curieux"},"."] },
+  { id:"famille", name:"Ciné Famille", icon:"i-building", likes:["famille","feelgood","grandpublic"],
+    say:["Ici on aime rire en ",{t:"famille",w:"famille"}," : des comédies ",{t:"feelgood",w:"feel-good"}," pour le ",{t:"grandpublic",w:"grand public"},"."] },
+  { id:"entracte", name:"L'Entracte", icon:"i-sparkles", likes:["jeune","moderne","court","engage"],
+    say:["On cherche des films ",{t:"court",w:"courts"},", ",{t:"moderne",w:"modernes"}," et ",{t:"engage",w:"engagés"},", pour un public ",{t:"jeune",w:"jeune"},"."] },
 ];
-// libellés FR des tags (films = "ce que c'est", salles = "ce qu'elles veulent")
+// libellés FR des tags films (un film se décrit par étiquettes courtes)
 const TAG_LABELS = {auteur:"Auteur",adulte:"Public adulte",engage:"Engagé",famille:"Famille",feelgood:"Feel-good",grandpublic:"Grand public",curieux:"Public curieux",court:"Court-métrage",moderne:"Moderne",jeune:"Jeune public"};
 const tagLabel = t => TAG_LABELS[t] || t;
 const ROLES = {
@@ -461,17 +466,18 @@ function renderSalles(){
   const sel = selectedId ? film(selectedId) : null;
   $("#salles").innerHTML=SALLES.map(s=>{
     const fid=state.placement[s.id], f=fid?film(fid):null;
-    const refFilm = sel || f; // ce qui sert à colorer les tags
-    const tagsHtml = `<div class="tags">${s.likes.map(t=>{
-      const ok = refFilm && refFilm.tags.includes(t);
-      return `<span class="tag ${ok?'match':''}">${tagLabel(t)}</span>`;
-    }).join("")}</div>`;
+    const refFilm = sel || f; // ce qui sert à colorer la phrase
+    const sayHtml = `<p class="say">${s.say.map(part=>{
+      if(typeof part === "string") return part;
+      const ok = refFilm && refFilm.tags.includes(part.t);
+      return `<span class="kw ${ok?'match':''}">${part.w}</span>`;
+    }).join("")}</p>`;
     const inner=f?`<div class="placed-card" style="background-image:url('${f.img}')">
         <button class="rm" data-remove="${s.id}" aria-label="Retirer"><svg><use href="#i-x"/></svg></button>
         <div class="info"><div class="t">${f.title}</div><div class="g">${f.genre}</div></div></div>`
       :`<div class="slot">Dépose un film ici</div>`;
     return `<div class="salle ${f?'full':''}" data-salle="${s.id}">
-      <h3><svg><use href="#${s.icon}"/></svg> ${s.name}</h3>${tagsHtml}${inner}</div>`;
+      <h3><svg><use href="#${s.icon}"/></svg> ${s.name}</h3>${sayHtml}${inner}</div>`;
   }).join("");
   wireSalles();
   $("#validateBtn").disabled=Object.keys(state.placement).length!==SALLES.length;
