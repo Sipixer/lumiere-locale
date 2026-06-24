@@ -128,6 +128,13 @@
   .teaser .ov{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:11px 12px}
   .teaser .ov .title{font-weight:900;font-size:15px;line-height:1.12;text-shadow:0 2px 8px rgba(0,0,0,.6)}
   .teaser .ov .meta{font-size:11px;color:#d6ddff;margin-top:3px;font-weight:600}
+  .tags{display:flex;flex-wrap:wrap;gap:4px}
+  .teaser .ov .tags{margin-top:7px}
+  .tag{font-size:9.5px;font-weight:800;letter-spacing:.2px;padding:3px 7px;border-radius:var(--r-pill);background:rgba(255,255,255,.16);color:#eef1ff;border:1px solid rgba(255,255,255,.18);white-space:nowrap;transition:.18s}
+  .tag.match{background:var(--good);color:#06251a;border-color:transparent;box-shadow:0 0 10px rgba(70,224,168,.5)}
+  .salle .tags{margin:2px 0 12px}
+  .salle .tag{background:var(--navy-3);color:var(--gold-soft);border-color:var(--line)}
+  .salle.over .tag.match,.salle .tag.match{background:var(--good);color:#06251a;border-color:transparent}
   .teaser .grab-hint{position:absolute;top:9px;right:9px;z-index:2;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:rgba(9,15,40,.6);backdrop-filter:blur(4px);opacity:0;transition:.2s}
   .teaser:hover .grab-hint{opacity:1}
   .teaser .grab-hint svg{width:14px;height:14px;color:#fff}
@@ -311,7 +318,7 @@
 
   <!-- SALLES -->
   <section class="block">
-    <div class="sec-head"><span class="num">2</span><h2>Tes 3 salles</h2><span class="step-hint">Dépose un film par salle</span></div>
+    <div class="sec-head"><span class="num">2</span><h2>Tes 3 salles</h2><span class="step-hint">🟢 Sélectionne un film : les goûts qui matchent s'allument</span></div>
     <div class="salles" id="salles"></div>
 
     <div class="game-actions">
@@ -401,6 +408,9 @@ const SALLES = [
   { id:"famille",  name:"Ciné Famille",icon:"i-building", line:"Familial · grand public",      likes:["famille","feelgood","grandpublic"] },
   { id:"entracte", name:"L'Entracte",  icon:"i-sparkles", line:"Jeune public · étudiant",      likes:["jeune","moderne","court","engage"] },
 ];
+// libellés FR des tags (films = "ce que c'est", salles = "ce qu'elles veulent")
+const TAG_LABELS = {auteur:"Auteur",adulte:"Public adulte",engage:"Engagé",famille:"Famille",feelgood:"Feel-good",grandpublic:"Grand public",curieux:"Public curieux",court:"Court-métrage",moderne:"Moderne",jeune:"Jeune public"};
+const tagLabel = t => TAG_LABELS[t] || t;
 const ROLES = {
   real:{ key:"real", label:"réalisateur·rice",
     desc:"Tu joues, tu gagnes des <b>points</b>, et tu comprends <b>comment une salle choisit</b> — pour mieux placer ton film.",
@@ -439,20 +449,29 @@ function renderCatalogue(){
       <div class="poster" style="background-image:url('${f.img}')">
         <span class="badge">${f.badge}</span>
         <span class="grab-hint"><svg><use href="#i-grab"/></svg></span>
-        <div class="ov"><div class="title">${f.title}</div><div class="meta">${f.genre}</div></div>
+        <div class="ov"><div class="title">${f.title}</div><div class="meta">${f.genre}</div>
+          <div class="tags">${f.tags.map(t=>`<span class="tag">${tagLabel(t)}</span>`).join("")}</div>
+        </div>
       </div>
     </article>`).join("");
   wireTeasers();
 }
+// film "actif" pour visualiser le matching : celui sélectionné, sinon le film déjà posé dans la salle
 function renderSalles(){
+  const sel = selectedId ? film(selectedId) : null;
   $("#salles").innerHTML=SALLES.map(s=>{
     const fid=state.placement[s.id], f=fid?film(fid):null;
+    const refFilm = sel || f; // ce qui sert à colorer les tags
+    const tagsHtml = `<div class="tags">${s.likes.map(t=>{
+      const ok = refFilm && refFilm.tags.includes(t);
+      return `<span class="tag ${ok?'match':''}">${tagLabel(t)}</span>`;
+    }).join("")}</div>`;
     const inner=f?`<div class="placed-card" style="background-image:url('${f.img}')">
         <button class="rm" data-remove="${s.id}" aria-label="Retirer"><svg><use href="#i-x"/></svg></button>
         <div class="info"><div class="t">${f.title}</div><div class="g">${f.genre}</div></div></div>`
       :`<div class="slot">Dépose un film ici</div>`;
     return `<div class="salle ${f?'full':''}" data-salle="${s.id}">
-      <h3><svg><use href="#${s.icon}"/></svg> ${s.name}</h3><div class="line">${s.line}</div>${inner}</div>`;
+      <h3><svg><use href="#${s.icon}"/></svg> ${s.name}</h3>${tagsHtml}${inner}</div>`;
   }).join("");
   wireSalles();
   $("#validateBtn").disabled=Object.keys(state.placement).length!==SALLES.length;
@@ -465,7 +484,7 @@ function removeFromSalle(sid){delete state.placement[sid];hideResult();renderCat
 function wireTeasers(){$$(".teaser").forEach(el=>{const id=el.dataset.id;
   el.addEventListener("dragstart",e=>{dragId=id;el.classList.add("dragging");e.dataTransfer.setData("text/plain",id);e.dataTransfer.effectAllowed="move"});
   el.addEventListener("dragend",()=>{el.classList.remove("dragging");dragId=null});
-  const pick=()=>{selectedId=(selectedId===id)?null:id;$$(".teaser").forEach(t=>t.classList.toggle("selected",t.dataset.id===selectedId))};
+  const pick=()=>{selectedId=(selectedId===id)?null:id;$$(".teaser").forEach(t=>t.classList.toggle("selected",t.dataset.id===selectedId));renderSalles()};
   el.addEventListener("click",pick);
   el.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();pick()}});
 })}
