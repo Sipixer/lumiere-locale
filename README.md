@@ -5,6 +5,8 @@ Refonte propre et gamifiée du prototype [aziliss/lumierelocale](https://github.
 Une marketplace cinéma qui connecte **réalisateurs** et **salles indépendantes**, avec un mini-jeu
 de programmation (drag & drop) et un programme de fidélité (points → niveaux → récompenses).
 
+🔗 **En ligne : https://sipixer.github.io/lumiere-locale/**
+
 ## Lancer
 
 Aucune dépendance, aucun build. Ouvre simplement le fichier :
@@ -45,4 +47,7 @@ Le formulaire de contact est simulé (prototype). Le point d'accroche est commen
 ## Données
 
 Tout est centralisé en haut du `<script>` : `FILMS`, `SALLES`, `ROLES`, `EARN_TABLE`.
-Les barèmes, niveaux et récompenses reprennent fidèlement ceux du prototype d'origine.
+Les **5 films** (Sous les lampions, Les mauvaises herbes, Les échappées, À contre-jour,
+Le bruit des vagues), les **3 salles** (Le Rex, Ciné Famille, L'Entracte), les barèmes,
+niveaux et récompenses reprennent fidèlement ceux du prototype d'origine.
+Les visuels sont des photos thématiques (Unsplash) choisies pour coller à chaque film.
