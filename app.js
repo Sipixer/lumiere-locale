@@ -45,11 +45,17 @@ const BADGES = [
 /* ---------- ÉTAT ---------- */
 const STORE_KEY="lumiere-locale-v4";
 // grid[salleId][dayKey] = filmId   (une séance = une case remplie)
-const state={ points:0, grid:{}, lastPlay:null };
+// played : la projection de la semaine est lancée et FIGÉE (plus rejouable tant qu'on n'a pas vidé la grille)
+const state={ points:0, grid:{}, lastPlay:null, played:false };
 SALLES.forEach(s=>state.grid[s.id]={});
 function monthKey(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`}
-function save(){try{localStorage.setItem(STORE_KEY,JSON.stringify({points:state.points,lastPlay:state.lastPlay}))}catch(e){}}
-function load(){try{const r=JSON.parse(localStorage.getItem(STORE_KEY)||"{}");if(typeof r.points==="number")state.points=r.points;if(r.lastPlay)state.lastPlay=r.lastPlay}catch(e){}}
+function save(){try{localStorage.setItem(STORE_KEY,JSON.stringify({points:state.points,lastPlay:state.lastPlay,grid:state.grid,played:state.played}))}catch(e){}}
+function load(){try{const r=JSON.parse(localStorage.getItem(STORE_KEY)||"{}");
+  if(typeof r.points==="number")state.points=r.points;
+  if(r.lastPlay)state.lastPlay=r.lastPlay;
+  if(r.grid){SALLES.forEach(s=>{state.grid[s.id]=r.grid[s.id]||{}})}   // restaure la grille jouée
+  if(r.played){state.played=true;revealed=true}                        // semaine déjà projetée → résultat figé
+}catch(e){}}
 
 const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>[...r.querySelectorAll(s)];
@@ -142,15 +148,22 @@ function updateHud(){
   else {$("#audTotal").textContent="?";$("#audTotal").dataset.v=0;}
   $("#sessCount").textContent=`${n}/${GOAL}`;
   $("#weekProg").style.width=Math.min(100,(n/GOAL)*100)+"%";
-  $("#playBtn").disabled = n<GOAL;
-  $("#playHint").textContent = n<GOAL ? `Place encore ${GOAL-n} séance${GOAL-n>1?'s':''} pour lancer ta semaine` : "Ta semaine est prête — lance la projection !";
+  if(state.played){
+    $("#playBtn").disabled=true;
+    $("#playBtn").innerHTML='<svg><use href="#i-check"/></svg> Semaine projetée';
+    $("#playHint").textContent="Cette semaine est jouée. Vide la grille pour programmer une nouvelle semaine.";
+  } else {
+    $("#playBtn").disabled = n<GOAL;
+    $("#playBtn").innerHTML='<svg><use href="#i-bolt"/></svg> Lancer la projection';
+    $("#playHint").textContent = n<GOAL ? `Place encore ${GOAL-n} séance${GOAL-n>1?'s':''} pour lancer ta semaine` : "Ta semaine est prête — lance la projection !";
+  }
 }
 
 /* ---------- INTERACTION : sélection film + pose sur grille ---------- */
 let selectedId=null, dragId=null, revealed=false;   // revealed = la projection a été lancée (scores visibles)
 function selectFilm(id){selectedId=(selectedId===id)?null:id;closePicker();renderCatalogue();renderGrid()}
-function placeAt(sid,day,fid){ closePicker(); revealed=false; state.grid[sid][day]=fid; hideResult(); renderGrid(); }
-function clearAt(sid,day){ closePicker(); revealed=false; delete state.grid[sid][day]; hideResult(); renderGrid(); }
+function placeAt(sid,day,fid){ if(state.played)return; closePicker(); revealed=false; state.grid[sid][day]=fid; save(); hideResult(); renderGrid(); }
+function clearAt(sid,day){ if(state.played)return; closePicker(); revealed=false; delete state.grid[sid][day]; save(); hideResult(); renderGrid(); }
 
 function wireFilms(){$$(".film").forEach(el=>{const id=el.dataset.id;
   el.addEventListener("click",()=>selectFilm(id));
@@ -165,6 +178,7 @@ function wireGrid(){
     c.addEventListener("dragleave",()=>c.classList.remove("over"));
     c.addEventListener("drop",e=>{e.preventDefault();c.classList.remove("over");const id=dragId||e.dataTransfer.getData("text/plain");if(id)placeAt(sid,day,id)});
     c.addEventListener("click",e=>{
+      if(state.played){toast("Semaine déjà projetée · vide la grille pour rejouer");return}
       if(e.target.closest("[data-rm]"))return;
       if(state.grid[sid][day]){           // case pleine : on la vide
         clearAt(sid,day);
@@ -253,25 +267,13 @@ function buildContext(){
 function starsFor(score){const full=Math.round(score/20);return "★★★★★☆☆☆☆☆".slice(5-full,10-full)} // 5 étoiles pleines/vides
 function verdictFor(score){if(score>=85)return "Excellent programme ! Ton public t'adore.";if(score>=65)return "Très bonne semaine — les salles sont bien remplies.";if(score>=45)return "Correct, mais quelques séances tournent à vide.";return "Semaine difficile : revois tes films et tes jours."}
 
-function play(){
-  closePicker();
-  revealed=true; renderGrid();          // on révèle audiences & couleurs sur la grille
-  const ctx=buildContext();
-  // score /100 : qualité moyenne des séances (audience réelle / audience max possible)
-  const maxAud=ctx.sessions.reduce((a,x)=>a+salle(x.sid).seats,0)||1;
-  const score=Math.round(Math.min(100,(ctx.audience/maxAud)*100));
-  const unlocked=BADGES.filter(b=>b.test(ctx));
-
-  // points : crédités 1×/mois (anti-farming)
-  const playedThisMonth = state.lastPlay===monthKey();
-  const gained = playedThisMonth ? 0 : 150 + Math.round(score*1.5) + unlocked.length*100;
-
-  // affichage résultat
+// Affiche le panneau de résultat (commun au 1er lancement et à la restauration au rechargement).
+function renderResult(ctx,score,unlocked,creditMsg,capped,animate){
   $("#result").classList.add("show");
   $("#rStars").textContent=starsFor(score);
   $("#rVerdict").textContent=verdictFor(score);
   $("#rAudience").textContent=ctx.audience.toLocaleString("fr-FR");
-  animateNumber($("#rScore"),0,score,900);
+  if(animate)animateNumber($("#rScore"),0,score,900); else $("#rScore").textContent=score;
   $("#rBadges").innerHTML = BADGES.map(b=>{
     const on=unlocked.includes(b);
     return `<div class="badge-chip ${on?'on':''}" title="${b.desc}">
@@ -279,14 +281,34 @@ function play(){
       <span class="bc-name">${b.name}</span></div>`;
   }).join("");
   const wrap=$("#rPtsWrap"), pEl=$("#rPts");
-  if(playedThisMonth){ wrap.classList.add("capped"); pEl.textContent="Score enregistré · bonus mensuel déjà pris"; }
-  else { wrap.classList.remove("capped"); pEl.textContent=`+${gained} points fidélité`; }
-
+  wrap.classList.toggle("capped",capped); pEl.textContent=creditMsg;
   resultShown=true;
+}
+function scoreOf(ctx){const maxAud=ctx.sessions.reduce((a,x)=>a+salle(x.sid).seats,0)||1;return Math.round(Math.min(100,(ctx.audience/maxAud)*100))}
+
+function play(){
+  if(state.played || countSessions()<GOAL) return;   // pas de relance d'une semaine déjà projetée
+  closePicker();
+  revealed=true; state.played=true;     // on FIGE la semaine
+  renderGrid();                         // on révèle audiences & couleurs sur la grille
+  const ctx=buildContext(), score=scoreOf(ctx), unlocked=BADGES.filter(b=>b.test(ctx));
+
+  // points : crédités 1×/mois (anti-farming)
+  const playedThisMonth = state.lastPlay===monthKey();
+  const gained = playedThisMonth ? 0 : 150 + Math.round(score*1.5) + unlocked.length*100;
+  const msg = playedThisMonth ? "Score enregistré · bonus mensuel déjà pris" : `+${gained} points fidélité`;
+  renderResult(ctx,score,unlocked,msg,playedThisMonth,true);
+
   if(gained>0){ state.lastPlay=monthKey(); addPoints(gained,false); } else save();
   if(score>=70||unlocked.length>=3) burstConfetti();
   $("#result").scrollIntoView({behavior:"smooth",block:"center"});
   showSticky();
+}
+// Au rechargement d'une semaine déjà projetée : on ré-affiche le résultat figé, SANS recréditer.
+function restoreResult(){
+  const ctx=buildContext(); if(!ctx.sessions.length)return;
+  const score=scoreOf(ctx), unlocked=BADGES.filter(b=>b.test(ctx));
+  renderResult(ctx,score,unlocked,"Semaine projetée · résultat enregistré",true,false);
 }
 function hideResult(){if(!resultShown)return;$("#result").classList.remove("show");resultShown=false}
 
@@ -324,7 +346,7 @@ window.addEventListener("scroll",()=>{if(window.scrollY>620)showSticky()},{passi
 
 /* ---------- RESET DÉMO (?reset=1 ou appui long sur le logo) ---------- */
 function demoReset(viaUrl){
-  state.points=0;state.lastPlay=null;SALLES.forEach(s=>state.grid[s.id]={});selectedId=null;revealed=false;closePicker();
+  state.points=0;state.lastPlay=null;state.played=false;SALLES.forEach(s=>state.grid[s.id]={});selectedId=null;revealed=false;closePicker();
   try{localStorage.removeItem(STORE_KEY)}catch(e){}
   save();hideResult();renderCatalogue();renderGrid();renderHud();toast("🔄 Démo réinitialisée");
   if(viaUrl){const u=new URL(location.href);u.searchParams.delete("reset");history.replaceState(null,"",u)}
@@ -348,7 +370,12 @@ function burstConfetti(){const c=["#ffc83d","#ffe6a3","#46e0a8","#8a9bff","#ff5d
 /* ---------- INIT ---------- */
 function init(){
   load();renderCatalogue();renderGrid();renderHud();wireContact();wireDemoReset();
+  if(state.played) restoreResult();      // semaine déjà jouée → on ré-affiche le résultat figé
   $("#playBtn").addEventListener("click",play);
-  $("#clearBtn").addEventListener("click",()=>{closePicker();SALLES.forEach(s=>state.grid[s.id]={});selectedId=null;revealed=false;hideResult();renderCatalogue();renderGrid();toast("Grille vidée")});
+  $("#clearBtn").addEventListener("click",()=>{
+    closePicker();SALLES.forEach(s=>state.grid[s.id]={});
+    selectedId=null;revealed=false;state.played=false;   // on déverrouille pour une nouvelle semaine
+    save();hideResult();renderCatalogue();renderGrid();toast("Nouvelle semaine — à toi de jouer !");
+  });
 }
 init();
