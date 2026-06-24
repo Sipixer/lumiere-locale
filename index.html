@@ -3,271 +3,36 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="description" content="Lumière Locale — CinéMatch : la marketplace gamifiée qui connecte réalisateurs et salles de cinéma indépendantes." />
+<meta name="description" content="Lumière Locale — CinéMatch : le jeu où tu programmes ta semaine de cinéma indépendant." />
 <title>Lumière Locale — CinéMatch</title>
-<style>
-  /* ============================================================
-     DESIGN SYSTEM
-     ============================================================ */
-  :root{
-    --navy:        #090f28;
-    --navy-2:      #0f1739;
-    --navy-3:      #18224f;
-    --surface:     #131d47;
-    --surface-2:   #1c2a63;
-    --line:        rgba(255,255,255,.08);
-    --line-strong: rgba(255,255,255,.18);
-
-    --gold:        #ffc83d;
-    --gold-2:      #ff9d2e;
-    --gold-soft:   #ffe6a3;
-    --ink:         #f4f6ff;
-    --muted:       #aab3d6;
-    --muted-2:     #757fae;
-
-    --good:        #46e0a8;
-    --hot:         #ff5d7a;
-    --accent:      #8a9bff;
-    --violet:      #b06bff;
-
-    --r-sm: 12px;
-    --r-md: 18px;
-    --r-lg: 26px;
-    --r-pill: 999px;
-    --shadow-2: 0 20px 50px rgba(0,0,0,.45);
-    --glow-gold: 0 0 0 1px rgba(255,200,61,.5), 0 0 30px rgba(255,200,61,.3);
-    --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
-  body{
-    font-family:var(--font);color:var(--ink);
-    background:
-      radial-gradient(1000px 700px at 88% -8%, rgba(176,107,255,.20), transparent 55%),
-      radial-gradient(800px 600px at -5% 8%, rgba(255,157,46,.14), transparent 55%),
-      var(--navy);
-    line-height:1.45;-webkit-font-smoothing:antialiased;min-height:100vh;padding-bottom:78px;
-  }
-  button{font-family:inherit}
-  ::selection{background:var(--gold);color:var(--navy)}
-  .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
-
-  /* HEADER */
-  header.site{position:sticky;top:0;z-index:40;backdrop-filter:blur(14px);background:rgba(9,15,40,.72);border-bottom:1px solid var(--line)}
-  .nav{display:flex;align-items:center;gap:16px;height:62px}
-  .brand{display:flex;align-items:center;gap:11px;font-weight:900;letter-spacing:.2px}
-  .brand .logo{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:linear-gradient(140deg,var(--gold),var(--gold-2));box-shadow:var(--glow-gold)}
-  .brand .logo svg{width:19px;height:19px;color:var(--navy)}
-  .brand small{display:block;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.4px}
-  .nav .spacer{flex:1}
-  .hud-mini{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:800;background:var(--surface);border:1px solid var(--line);padding:7px 13px;border-radius:var(--r-pill)}
-  .hud-mini .pts{color:var(--gold)}
-  .hud-mini svg{width:15px;height:15px;color:var(--gold)}
-  .nav .nav-cta{display:inline-flex;align-items:center;gap:7px;font-weight:800;font-size:13.5px;padding:9px 16px;border-radius:var(--r-pill);border:none;cursor:pointer;background:linear-gradient(140deg,var(--gold),var(--gold-2));color:var(--navy);box-shadow:0 6px 18px rgba(255,157,46,.35)}
-  .nav .nav-cta svg{width:14px;height:14px}
-
-  /* HERO */
-  .hero{padding:48px 0 26px;text-align:center}
-  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--gold-soft);background:rgba(255,200,61,.10);border:1px solid rgba(255,200,61,.28);padding:6px 14px;border-radius:var(--r-pill);margin-bottom:18px}
-  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px var(--gold);animation:pulse 1.6s infinite}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
-  h1{font-size:clamp(32px,5.5vw,58px);line-height:1.04;letter-spacing:-.03em;font-weight:900;max-width:13ch;margin:0 auto}
-  h1 .hl{background:linear-gradient(110deg,var(--gold),var(--gold-soft));-webkit-background-clip:text;background-clip:text;color:transparent}
-  .hero .lead{max-width:44ch;margin:16px auto 0;color:var(--muted);font-size:clamp(15px,2vw,18px)}
-
-  /* ROLE TOGGLE */
-  .rolewrap{display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:26px}
-  .role-toggle{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-pill);padding:5px;gap:4px;position:relative}
-  .role-toggle button{border:none;background:transparent;color:var(--muted);font-weight:800;font-size:14px;cursor:pointer;padding:11px 22px;border-radius:var(--r-pill);display:flex;align-items:center;gap:9px;transition:color .25s;position:relative;z-index:2}
-  .role-toggle button svg{width:17px;height:17px}
-  .role-toggle button.active{color:var(--navy)}
-  .role-toggle .glider{position:absolute;top:5px;bottom:5px;z-index:1;border-radius:var(--r-pill);background:linear-gradient(140deg,var(--gold),var(--gold-2));box-shadow:0 6px 16px rgba(255,157,46,.4);transition:transform .32s cubic-bezier(.4,1.2,.4,1),width .32s cubic-bezier(.4,1.2,.4,1)}
-  .role-desc{max-width:50ch;text-align:center;color:var(--muted);font-size:14px}
-  .role-desc b{color:var(--gold-soft)}
-
-  /* SECTIONS */
-  section.block{padding:30px 0}
-  .sec-head{display:flex;align-items:center;gap:11px;margin-bottom:18px}
-  .sec-head .num{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;font-size:14px;font-weight:900;background:linear-gradient(140deg,var(--gold),var(--gold-2));color:var(--navy)}
-  .sec-head h2{font-size:21px;font-weight:900;letter-spacing:-.01em}
-  .sec-head .step-hint{margin-left:auto;font-size:12.5px;font-weight:700;color:var(--muted-2)}
-
-  /* HUD */
-  .hud{display:grid;grid-template-columns:1fr 1.5fr;gap:14px;border:1px solid var(--line);border-radius:var(--r-lg);background:linear-gradient(180deg,var(--surface),var(--navy-2));padding:20px}
-  .hud .level-card{display:flex;flex-direction:column;justify-content:center}
-  .hud .level-card .tier{font-size:23px;font-weight:900;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
-  .hud .level-card .tier svg{width:20px;height:20px;color:var(--gold)}
-  .hud .level-card .pts-line{color:var(--muted);font-size:13.5px;margin-top:2px}
-  .hud .level-card .pts-line b{color:var(--gold)}
-  .hud .progress{margin-top:12px}
-  .hud .bar{height:9px;border-radius:var(--r-pill);background:var(--navy-3);overflow:hidden}
-  .hud .bar i{display:block;height:100%;border-radius:var(--r-pill);background:linear-gradient(90deg,var(--gold),var(--gold-soft));transition:width .7s cubic-bezier(.2,.9,.3,1)}
-  .hud .lbl{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted-2);margin-top:6px}
-  .reward-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-  .rwd{display:flex;flex-direction:column;gap:6px;padding:11px 11px;border-radius:var(--r-sm);background:var(--navy-2);border:1px solid var(--line);transition:.2s;position:relative}
-  .rwd.unlocked{border-color:rgba(70,224,168,.45);background:rgba(70,224,168,.08)}
-  .rwd .ic{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:var(--surface-2)}
-  .rwd .ic svg{width:16px;height:16px;color:var(--gold)}
-  .rwd.unlocked .ic{background:rgba(70,224,168,.15)}
-  .rwd.unlocked .ic svg{color:var(--good)}
-  .rwd .t{font-weight:800;font-size:12px;line-height:1.2}
-  .rwd .cost{font-size:11px;font-weight:900;color:var(--gold)}
-  .rwd.unlocked .cost{color:var(--good)}
-
-  /* CATALOGUE */
-  .catalogue{display:grid;grid-template-columns:repeat(auto-fill,minmax(176px,1fr));gap:14px}
-  .teaser{border-radius:var(--r-md);overflow:hidden;border:1px solid var(--line);background:var(--surface);cursor:grab;position:relative;transition:transform .2s,box-shadow .2s,border-color .2s,opacity .2s;touch-action:manipulation}
-  .teaser:hover{transform:translateY(-4px);box-shadow:var(--shadow-2);border-color:var(--line-strong)}
-  .teaser:active{cursor:grabbing}
-  .teaser.dragging{opacity:.45;transform:scale(.96)}
-  .teaser.placed{opacity:.35;pointer-events:none;filter:grayscale(.5)}
-  .teaser.selected{box-shadow:var(--glow-gold);border-color:var(--gold);transform:translateY(-4px)}
-  .teaser .poster{aspect-ratio:2/2.5;background-size:cover;background-position:center;position:relative}
-  .teaser .poster::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(9,15,40,0) 35%,rgba(9,15,40,.92))}
-  .teaser .badge{position:absolute;top:9px;left:9px;z-index:2;font-size:10px;font-weight:900;letter-spacing:.4px;text-transform:uppercase;color:var(--navy);background:var(--gold);padding:4px 9px;border-radius:var(--r-pill)}
-  .teaser .ov{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:11px 12px}
-  .teaser .ov .title{font-weight:900;font-size:15px;line-height:1.12;text-shadow:0 2px 8px rgba(0,0,0,.6)}
-  .teaser .ov .meta{font-size:11px;color:#d6ddff;margin-top:3px;font-weight:600}
-  .tags{display:flex;flex-wrap:wrap;gap:4px}
-  .teaser .ov .tags{margin-top:7px}
-  .tag{font-size:9.5px;font-weight:800;letter-spacing:.2px;padding:3px 7px;border-radius:var(--r-pill);background:rgba(255,255,255,.16);color:#eef1ff;border:1px solid rgba(255,255,255,.18);white-space:nowrap;transition:.18s}
-  .tag.match{background:var(--good);color:#06251a;border-color:transparent;box-shadow:0 0 10px rgba(70,224,168,.5)}
-  .salle .say{font-size:12.5px;line-height:1.5;color:var(--muted);font-style:italic;margin:4px 0 12px}
-  .salle .say .kw{font-style:normal;font-weight:800;color:var(--gold-soft);border-radius:5px;padding:0 3px;transition:.2s}
-  .salle .say .kw.match{color:var(--good)}
-  .teaser .grab-hint{position:absolute;top:9px;right:9px;z-index:2;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:rgba(9,15,40,.6);backdrop-filter:blur(4px);opacity:0;transition:.2s}
-  .teaser:hover .grab-hint{opacity:1}
-  .teaser .grab-hint svg{width:14px;height:14px;color:#fff}
-
-  /* SALLES */
-  .salles{display:grid;grid-template-columns:repeat(auto-fit,minmax(228px,1fr));gap:14px}
-  .salle{border:2px dashed var(--line-strong);border-radius:var(--r-md);background:linear-gradient(180deg,var(--surface),var(--navy-2));padding:15px;min-height:194px;display:flex;flex-direction:column;transition:.2s}
-  .salle.over{border-color:var(--gold);border-style:solid;box-shadow:var(--glow-gold);transform:translateY(-3px)}
-  .salle.full{border-style:solid;border-color:rgba(70,224,168,.45)}
-  .salle h3{font-size:15px;font-weight:900;display:flex;align-items:center;gap:8px}
-  .salle h3 svg{width:17px;height:17px;color:var(--gold)}
-  .salle .line{font-size:11.5px;color:var(--muted-2);margin:4px 0 12px}
-  .salle .slot{flex:1;display:grid;place-items:center;border-radius:var(--r-sm);color:var(--muted-2);font-size:12.5px;font-weight:600;text-align:center;padding:12px;border:2px dashed var(--line)}
-  .salle .placed-card{flex:1;border-radius:var(--r-sm);overflow:hidden;position:relative;background-size:cover;background-position:center;display:flex;align-items:flex-end;min-height:120px}
-  .salle .placed-card::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(9,15,40,.1),rgba(9,15,40,.9))}
-  .salle .placed-card .info{position:relative;z-index:2;padding:11px 12px}
-  .salle .placed-card .info .t{font-weight:900;font-size:14px;text-shadow:0 2px 6px rgba(0,0,0,.6)}
-  .salle .placed-card .info .g{font-size:11px;color:#d6ddff}
-  .salle .placed-card .rm{position:absolute;top:8px;right:8px;z-index:3;background:rgba(9,15,40,.65);backdrop-filter:blur(4px);border:none;color:#fff;cursor:pointer;width:28px;height:28px;border-radius:8px;display:grid;place-items:center;transition:.15s}
-  .salle .placed-card .rm:hover{background:var(--hot)}
-  .salle .placed-card .rm svg{width:15px;height:15px}
-
-  /* ACTIONS */
-  .game-actions{display:flex;gap:12px;justify-content:center;margin-top:22px;flex-wrap:wrap}
-  .btn{border:none;cursor:pointer;font-weight:900;font-size:14.5px;padding:13px 24px;border-radius:var(--r-pill);display:inline-flex;align-items:center;gap:9px;transition:transform .15s,box-shadow .2s,background .2s,opacity .2s}
-  .btn svg{width:17px;height:17px}
-  .btn:active{transform:scale(.96)}
-  .btn-primary{background:linear-gradient(140deg,var(--gold),var(--gold-2));color:var(--navy);box-shadow:0 10px 26px rgba(255,157,46,.4)}
-  .btn-primary:hover{box-shadow:0 12px 32px rgba(255,157,46,.55);transform:translateY(-1px)}
-  .btn-primary:disabled{opacity:.4;cursor:not-allowed;box-shadow:none;filter:grayscale(.4)}
-  .btn-ghost{background:var(--surface);color:var(--ink);border:1px solid var(--line)}
-  .btn-ghost:hover{background:var(--surface-2)}
-
-  /* RESULT */
-  .result{margin-top:22px;border:1px solid var(--line);border-radius:var(--r-lg);background:linear-gradient(180deg,var(--surface),var(--navy-2));padding:26px;text-align:center;display:none}
-  .result.show{display:block;animation:rise .45s cubic-bezier(.2,.9,.3,1.2)}
-  @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
-  .result .ribbon{font-size:11.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--gold)}
-  .result .score{font-size:clamp(46px,9vw,72px);font-weight:900;line-height:1;margin:6px 0;letter-spacing:-.03em}
-  .result .score small{font-size:19px;color:var(--muted);font-weight:700}
-  .gauge{height:12px;border-radius:var(--r-pill);background:var(--navy-3);overflow:hidden;max-width:420px;margin:14px auto 0}
-  .gauge i{display:block;height:100%;border-radius:var(--r-pill);background:linear-gradient(90deg,var(--gold),var(--good));width:0;transition:width .9s cubic-bezier(.2,.9,.3,1)}
-  .result .verdict{margin:14px auto 0;color:var(--muted);max-width:46ch;font-size:14.5px}
-  .result .pts-won{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-weight:900;background:rgba(255,200,61,.12);border:1px solid rgba(255,200,61,.32);color:var(--gold-soft);padding:9px 18px;border-radius:var(--r-pill)}
-  .result .pts-won svg{width:16px;height:16px}
-  /* CTA agressif après résultat */
-  .result .convert{margin-top:22px;padding-top:22px;border-top:1px solid var(--line)}
-  .result .convert .ct{font-size:18px;font-weight:900;margin-bottom:4px}
-  .result .convert .cs{font-size:13.5px;color:var(--muted);margin-bottom:14px}
-
-  /* EARN — compact */
-  .earn{display:flex;flex-wrap:wrap;gap:9px}
-  .chip{display:inline-flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-pill);padding:9px 15px}
-  .chip .label{font-size:13px;color:var(--ink);font-weight:600}
-  .chip .pts{font-weight:900;color:var(--gold);font-size:13px}
-  .chip .pts::after{content:" pts";font-size:10px;color:var(--muted-2);font-weight:700}
-
-  /* MODAL */
-  .modal-back{position:fixed;inset:0;z-index:80;background:rgba(5,9,24,.72);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px}
-  .modal-back.show{display:flex;animation:fade .25s ease}
-  @keyframes fade{from{opacity:0}to{opacity:1}}
-  .modal{width:100%;max-width:480px;border:1px solid var(--line-strong);border-radius:var(--r-lg);background:linear-gradient(180deg,var(--surface),var(--navy-2));box-shadow:var(--shadow-2);padding:26px;position:relative;animation:rise .35s cubic-bezier(.2,.9,.3,1.2)}
-  .modal .close{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:10px;border:none;background:var(--navy-3);color:var(--muted);cursor:pointer;display:grid;place-items:center;transition:.15s}
-  .modal .close:hover{background:var(--surface-2);color:#fff}
-  .modal .close svg{width:17px;height:17px}
-  .modal .kicker{font-size:11.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--gold)}
-  .modal h2{font-size:22px;margin:6px 0 4px;font-weight:900}
-  .modal .sub{color:var(--muted);font-size:13.5px;margin-bottom:18px}
-  .modal .perk{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;color:var(--good);background:rgba(70,224,168,.1);border:1px solid rgba(70,224,168,.3);padding:6px 12px;border-radius:var(--r-pill);margin-bottom:16px}
-  .modal .perk svg{width:14px;height:14px}
-  .field{margin-bottom:12px}
-  .field label{display:block;font-size:12px;font-weight:800;color:var(--muted);margin-bottom:5px}
-  .field input,.field textarea{width:100%;background:var(--navy);border:1px solid var(--line-strong);border-radius:var(--r-sm);color:var(--ink);padding:12px 14px;font-family:inherit;font-size:14.5px;transition:.2s}
-  .field input:focus,.field textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(255,200,61,.18)}
-  .field textarea{resize:vertical;min-height:78px}
-  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .form-done{text-align:center;padding:14px 0}
-  .form-done .check{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;margin:0 auto 12px;background:rgba(70,224,168,.15);color:var(--good)}
-  .form-done .check svg{width:30px;height:30px}
-
-  /* STICKY CONTACT BAR */
-  .sticky-cta{position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(9,15,40,.86);backdrop-filter:blur(14px);border-top:1px solid var(--line-strong);transform:translateY(110%);transition:transform .4s cubic-bezier(.2,.9,.3,1.2)}
-  .sticky-cta.show{transform:none}
-  .sticky-cta .inner{display:flex;align-items:center;gap:14px;padding:13px 0}
-  .sticky-cta .txt{flex:1;min-width:0}
-  .sticky-cta .txt .a{font-weight:900;font-size:15px}
-  .sticky-cta .txt .b{font-size:12.5px;color:var(--muted)}
-  .sticky-cta .btn{padding:12px 22px;white-space:nowrap}
-  @media (max-width:560px){.sticky-cta .txt .b{display:none}}
-
-  /* FX */
-  .toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%) translateY(140px);background:var(--surface-2);border:1px solid var(--line-strong);color:var(--ink);padding:13px 20px;border-radius:var(--r-pill);font-weight:800;font-size:14px;z-index:70;box-shadow:var(--shadow-2);display:flex;align-items:center;gap:10px;transition:transform .4s cubic-bezier(.2,.9,.3,1.2)}
-  .toast.show{transform:translateX(-50%) translateY(0)}
-  .toast svg{width:18px;height:18px;color:var(--gold)}
-  .confetti{position:fixed;width:9px;height:14px;top:-20px;z-index:65;pointer-events:none;border-radius:2px}
-
-  footer.site{border-top:1px solid var(--line);margin-top:34px;padding:24px 0;color:var(--muted-2);font-size:12.5px;text-align:center}
-
-  @media (max-width:760px){
-    .hud{grid-template-columns:1fr}
-    .reward-strip{grid-template-columns:repeat(2,1fr)}
-    .grid-2{grid-template-columns:1fr}
-    .nav .hud-mini .label-txt{display:none}
-  }
-  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto}}
-</style>
+<link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="i-film" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18"/><path d="M7 2v20M17 2v20M2 12h20M2 7h5M2 17h5M17 17h5M17 7h5"/></symbol>
   <symbol id="i-building" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M16 6h.01M8 10h.01M16 10h.01M8 14h.01M16 14h.01"/></symbol>
-  <symbol id="i-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
   <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
   <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/></symbol>
   <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
-  <symbol id="i-ticket" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v14"/></symbol>
-  <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M7 16v-5M12 16V8M17 16v-9"/></symbol>
   <symbol id="i-handshake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17 2 2a1 1 0 0 0 1.41 0l4.3-4.3a1 1 0 0 0 0-1.41L13 7M9 11l-2 2a1 1 0 0 1-1.41 0l-1.18-1.18a1 1 0 0 1 0-1.41L8 7"/></symbol>
   <symbol id="i-clapper" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 11 16-3M5.88 4.12l2.6 4.5M11.7 3l2.6 4.5"/><rect x="4" y="11" width="16" height="9" rx="2"/></symbol>
   <symbol id="i-sparkles" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9L12 3ZM19 14l.9 2.1 2.1.9-2.1.9L19 20l-.9-2.1-2.1-.9 2.1-.9L19 14Z"/></symbol>
-  <symbol id="i-hourglass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 22h14M5 2h14M17 22v-4.2a2 2 0 0 0-.6-1.4L12 12l-4.4 4.4a2 2 0 0 0-.6 1.4V22M7 2v4.2a2 2 0 0 0 .6 1.4L12 12l4.4-4.4A2 2 0 0 0 17 6.2V2"/></symbol>
   <symbol id="i-coins" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18M7 6h1v4M16.71 13.88l.7.71-2.82 2.82"/></symbol>
   <symbol id="i-trophy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0 0 12 0V2Z"/></symbol>
   <symbol id="i-bolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z"/></symbol>
-  <symbol id="i-grab" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="18" r="1"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
 </svg>
 
 <header class="site">
   <div class="wrap nav">
     <div class="brand">
-      <span class="logo"><svg><use href="#i-clapper"/></svg></span>
+      <span class="logo" id="logoBtn" title="Lumière Locale"><svg><use href="#i-clapper"/></svg></span>
       <div>Lumière Locale<small>CinéMatch</small></div>
     </div>
     <div class="spacer"></div>
@@ -281,69 +46,84 @@
 <main class="wrap">
 
   <div class="hero">
-    <div class="eyebrow"><span class="dot"></span> Le jeu · des bons films, aux bonnes salles</div>
-    <h1>Matche. Programme. <span class="hl">Gagne</span>.</h1>
-    <p class="lead">Place les films dans les bonnes salles, fais grimper ton audience et débloque de vrais avantages. Lumière Locale, version jeu.</p>
+    <div class="eyebrow"><span class="dot"></span> Le jeu des bons films, aux bonnes salles</div>
+    <h1>Deviens <span class="hl">programmateur·rice</span><br>le temps d'une semaine.</h1>
+    <p class="lead">Remplis tes 3 salles avec les films qui feront vibrer le public. Plus ta prog colle, plus ton audience explose.</p>
 
-    <div class="rolewrap">
-      <div class="role-toggle" role="tablist" aria-label="Choisir un profil">
-        <span class="glider" id="glider" aria-hidden="true"></span>
-        <button id="roleReal" role="tab" aria-selected="true" class="active"><svg><use href="#i-film"/></svg> Réalisateur·rice</button>
-        <button id="roleDiff" role="tab" aria-selected="false"><svg><use href="#i-building"/></svg> Diffuseur / salle</button>
-      </div>
-      <p class="role-desc" id="roleDesc"></p>
+    <div class="how">
+      <div class="step"><b>1</b> <span class="k">Choisis</span> un film</div>
+      <div class="step"><b>2</b> <span class="k">Pose-le</span> sur le bon jour, dans la bonne salle</div>
+      <div class="step"><b>3</b> <span class="k">Lance</span> ta semaine et gagne des étoiles</div>
     </div>
   </div>
 
-  <!-- HUD -->
-  <section class="block">
-    <div class="hud">
-      <div class="level-card">
-        <div class="tier"><svg><use href="#i-trophy"/></svg> <span id="tierName">—</span></div>
-        <div class="pts-line"><b id="ptsNow">0</b> points fidélité</div>
-        <div class="progress">
-          <div class="bar"><i id="lvlBar" style="width:0%"></i></div>
-          <div class="lbl"><span id="lvlFrom">—</span><span id="lvlTo">—</span></div>
-        </div>
-      </div>
-      <div class="reward-strip" id="rewardStrip"></div>
+  <!-- GAME HUD -->
+  <div class="gamehud">
+    <div class="gcard">
+      <div class="gic"><svg><use href="#i-users"/></svg></div>
+      <div id="audCard"><div class="gl">Audience de la semaine</div><div class="gv"><span id="audTotal" data-v="0">0</span> <small>spectateurs</small></div></div>
     </div>
-  </section>
+    <div class="gcard objective">
+      <div class="row">
+        <div class="gic"><svg><use href="#i-calendar"/></svg></div>
+        <div><div class="gl">Séances programmées</div><div class="gv"><span id="sessCount">0/5</span></div></div>
+      </div>
+      <div class="weekbar"><i id="weekProg"></i></div>
+    </div>
+    <div class="gcard">
+      <div class="gic"><svg><use href="#i-star"/></svg></div>
+      <div><div class="gl">Objectif</div><div class="gv" style="font-size:15px;font-weight:800;line-height:1.25">Le meilleur<br>programme possible</div></div>
+    </div>
+  </div>
 
   <!-- CATALOGUE -->
-  <section class="block" id="game">
-    <div class="sec-head"><span class="num">1</span><h2 id="catTitle">Le catalogue</h2><span class="step-hint">🎬 Glisse ou clique pour choisir</span></div>
+  <section class="block">
+    <div class="sec-head"><span class="num">1</span><h2>Ton catalogue · 5 films</h2><span class="step-hint">🎬 Clique un film (ou glisse-le sur la grille)</span></div>
     <div class="catalogue" id="catalogue"></div>
   </section>
 
-  <!-- SALLES -->
+  <!-- GRILLE -->
   <section class="block">
-    <div class="sec-head"><span class="num">2</span><h2>Tes 3 salles</h2><span class="step-hint">🟢 Sélectionne un film : les goûts qui matchent s'allument</span></div>
-    <div class="salles" id="salles"></div>
+    <div class="sec-head"><span class="num">2</span><h2>Ta semaine de programmation</h2><span class="step-hint">🟢 Les jours favorables de chaque salle clignotent en vert</span></div>
+    <div class="grid-scroll"><div class="grid" id="grid"></div></div>
 
     <div class="game-actions">
-      <button class="btn btn-primary" id="validateBtn" disabled><svg><use href="#i-bolt"/></svg> Valider ma prog</button>
-      <button class="btn btn-ghost" id="resetBtn"><svg><use href="#i-refresh"/></svg> Recommencer</button>
+      <div class="play-hint" id="playHint">Place 5 séances pour lancer ta semaine</div>
+      <button class="btn btn-primary" id="playBtn" disabled><svg><use href="#i-bolt"/></svg> Lancer la projection</button>
+      <button class="btn btn-ghost" id="clearBtn"><svg><use href="#i-refresh"/></svg> Vider la grille</button>
     </div>
 
     <div class="result" id="result" role="status" aria-live="polite">
-      <div class="ribbon">Audience simulée</div>
-      <div class="score"><span id="scoreVal">0</span><small>/100</small></div>
-      <div class="gauge"><i id="scoreGauge"></i></div>
-      <p class="verdict" id="verdict"></p>
-      <div class="pts-won"><svg><use href="#i-coins"/></svg> <span id="ptsWon">+0 points</span></div>
+      <div class="ribbon">Ton score final</div>
+      <div class="big"><span class="score" id="rScore">0</span><span class="out">/100 pts</span></div>
+      <div class="stars" id="rStars">☆☆☆☆☆</div>
+      <p class="verdict" id="rVerdict"></p>
+      <div class="aud-line"><svg><use href="#i-users"/></svg> <span id="rAudience">0</span> spectateurs sur la semaine</div>
+
+      <div class="badges-wrap" id="rBadges"></div>
+
+      <div class="pts-won" id="rPtsWrap"><svg><use href="#i-coins"/></svg> <span id="rPts">+0 points</span></div>
+
       <div class="convert">
-        <div class="ct" id="convertTitle">Tu gères. On passe à du concret ?</div>
-        <div class="cs" id="convertSub"></div>
-        <button class="btn btn-primary" id="convertBtn"><svg><use href="#i-handshake"/></svg> <span id="convertCta">Être mis en relation</span></button>
+        <div class="ct">Tu gères. On passe à du concret ?</div>
+        <div class="cs">On te met en relation avec des films et des salles près de chez toi.</div>
+        <button class="btn btn-primary" id="convertBtn"><svg><use href="#i-handshake"/></svg> Être mis en relation</button>
       </div>
     </div>
   </section>
 
-  <!-- EARN compact -->
+  <!-- NIVEAU -->
   <section class="block">
-    <div class="sec-head"><span class="num">3</span><h2>Cumule des points</h2></div>
-    <div class="earn" id="earnTable"></div>
+    <div class="sec-head"><span class="num">3</span><h2>Ton niveau fidélité</h2></div>
+    <div class="levelcard">
+      <div class="lic"><svg><use href="#i-trophy"/></svg></div>
+      <div class="lc-main">
+        <div class="lc-tier" id="tierName">—</div>
+        <div class="lc-bar"><i id="lvlBar"></i></div>
+        <div class="lc-to" id="lvlTo">—</div>
+      </div>
+      <div class="lc-pts"><b id="ptsNow">0</b><span>points</span></div>
+    </div>
   </section>
 
 </main>
@@ -352,8 +132,8 @@
 <div class="sticky-cta" id="stickyCta">
   <div class="wrap inner">
     <div class="txt">
-      <div class="a" id="stickyTitle">Prêt·e à passer à l'action ?</div>
-      <div class="b" id="stickySub">Laisse tes coordonnées · +100 points offerts</div>
+      <div class="a">Prêt·e à passer à l'action ?</div>
+      <div class="b">Laisse tes coordonnées · +100 points offerts</div>
     </div>
     <button class="btn btn-primary" id="stickyBtn"><svg><use href="#i-bolt"/></svg> Être contacté →</button>
   </div>
@@ -364,24 +144,24 @@
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <button class="close" id="modalClose" aria-label="Fermer"><svg><use href="#i-x"/></svg></button>
     <div id="modalLive">
-      <div class="kicker" id="formKicker">Espace</div>
-      <h2 id="modalTitle">Lance ton projet</h2>
-      <p class="sub" id="formSub"></p>
+      <div class="kicker">Lumière Locale</div>
+      <h2 id="modalTitle">Passons à du concret</h2>
+      <p class="sub">Laisse tes coordonnées : on te met en relation avec les films et salles qui matchent.</p>
       <div class="perk"><svg><use href="#i-coins"/></svg> +100 points fidélité offerts</div>
       <form id="contactForm" novalidate>
         <div class="grid-2">
           <div class="field"><label for="f-name">Nom</label><input id="f-name" name="name" required autocomplete="name" placeholder="Ton nom" /></div>
-          <div class="field"><label for="f-org" id="orgLabel">Structure</label><input id="f-org" name="org" autocomplete="organization" placeholder="—" /></div>
+          <div class="field"><label for="f-org">Structure</label><input id="f-org" name="org" autocomplete="organization" placeholder="Salle / production" /></div>
         </div>
         <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" required autocomplete="email" placeholder="toi@exemple.fr" /></div>
         <div class="field"><label for="f-msg">Message (optionnel)</label><textarea id="f-msg" name="msg" placeholder="Parle-nous de ton projet…"></textarea></div>
-        <button class="btn btn-primary" type="submit" style="width:100%;justify-content:center"><span id="formCtaTxt">Envoyer</span> <svg><use href="#i-arrow"/></svg></button>
+        <button class="btn btn-primary" type="submit" style="width:100%;justify-content:center">Envoyer <svg><use href="#i-arrow"/></svg></button>
       </form>
     </div>
     <div class="form-done" id="formDone" style="display:none">
       <div class="check"><svg><use href="#i-check"/></svg></div>
       <h2>Bien reçu !</h2>
-      <p class="sub" id="formDoneMsg"></p>
+      <p class="sub">On revient vers toi très vite avec une sélection sur-mesure.</p>
       <div class="perk" style="margin-top:8px"><svg><use href="#i-coins"/></svg> +100 points crédités</div>
     </div>
   </div>
@@ -391,192 +171,6 @@
 
 <div class="toast" id="toast"><svg><use href="#i-coins"/></svg> <span id="toastTxt"></span></div>
 
-<script>
-/* ============================================================ DONNÉES ============================================================ */
-const IMG = (id,w=500)=>`https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=70`;
-
-// Films & salles repris du site officiel (aziliss/lumierelocale)
-const FILMS = [
-  { id:"lampions",   title:"Sous les lampions",     genre:"Drame · 1h32",       badge:"Long-métrage", img:IMG("1533174072545-7a4b6ad7a6c3"), tags:["auteur","adulte","engage"] },
-  { id:"herbes",     title:"Les mauvaises herbes",  genre:"Comédie · 1h48",     badge:"Long-métrage", img:IMG("1444930694458-01babf71870c"), tags:["famille","feelgood","grandpublic"] },
-  { id:"echappees",  title:"Les échappées",         genre:"Documentaire · 22min", badge:"Court", img:IMG("1469854523086-cc02fe5d8800"), tags:["auteur","curieux","engage","court"] },
-  { id:"contrejour", title:"À contre-jour",         genre:"Thriller · 1h27",    badge:"Long-métrage", img:IMG("1509248961158-e54f6934749c"), tags:["adulte","moderne","engage"] },
-  { id:"vagues",     title:"Le bruit des vagues",   genre:"Romance · 18min",    badge:"Court", img:IMG("1505118380757-91f5f5632de0"), tags:["famille","jeune","moderne","feelgood","court"] },
-];
-// Chaque salle "parle" : `say` est la phrase vivante, découpée en bouts.
-// Un bout {t:"..."} est lié à un tag → il se colore en vert quand le film sélectionné le possède.
-const SALLES = [
-  { id:"rex", name:"Le Rex", icon:"i-film", likes:["auteur","engage","curieux","adulte"],
-    say:["Je vibre pour les films ",{t:"auteur",w:"d'auteur"}," et ",{t:"engage",w:"engagés"},", devant un public ",{t:"adulte",w:"adulte"}," et ",{t:"curieux",w:"curieux"},"."] },
-  { id:"famille", name:"Ciné Famille", icon:"i-building", likes:["famille","feelgood","grandpublic"],
-    say:["Ici on aime rire en ",{t:"famille",w:"famille"}," : des comédies ",{t:"feelgood",w:"feel-good"}," pour le ",{t:"grandpublic",w:"grand public"},"."] },
-  { id:"entracte", name:"L'Entracte", icon:"i-sparkles", likes:["jeune","moderne","court","engage"],
-    say:["On cherche des films ",{t:"court",w:"courts"},", ",{t:"moderne",w:"modernes"}," et ",{t:"engage",w:"engagés"},", pour un public ",{t:"jeune",w:"jeune"},"."] },
-];
-// libellés FR des tags films (un film se décrit par étiquettes courtes)
-const TAG_LABELS = {auteur:"Auteur",adulte:"Public adulte",engage:"Engagé",famille:"Famille",feelgood:"Feel-good",grandpublic:"Grand public",curieux:"Public curieux",court:"Court-métrage",moderne:"Moderne",jeune:"Jeune public"};
-const tagLabel = t => TAG_LABELS[t] || t;
-const ROLES = {
-  real:{ key:"real", label:"réalisateur·rice",
-    desc:"Tu joues, tu gagnes des <b>points</b>, et tu comprends <b>comment une salle choisit</b> — pour mieux placer ton film.",
-    catTitle:"Ton catalogue",
-    tiers:[{name:"Talent Découverte",min:0},{name:"Talent Repéré",min:1000},{name:"Talent Sélectionné",min:2500},{name:"Talent Ambassadeur",min:5000}],
-    rewards:[{ico:"i-ticket",cost:200,t:"Teaser mis en avant"},{ico:"i-chart",cost:400,t:"Fiche audience"},{ico:"i-handshake",cost:700,t:"Mise en relation"},{ico:"i-clapper",cost:1200,t:"Promo dédiée"}],
-    convertSub:"On te met en relation avec les salles qui matchent ton film.",
-    form:{kicker:"Espace réalisateur·rice",title:"Lance ton projet",sub:"On te met en relation avec des salles qui collent à ton film.",org:"Production",cta:"Lancer mon projet",convertCta:"Trouver mes salles",done:"On revient vers toi avec des salles qui matchent ton film."} },
-  diff:{ key:"diff", label:"diffuseur / salle",
-    desc:"Tu repères les <b>projets prometteurs</b> et tu <b>cumules des points</b> qui réduisent tes commissions.",
-    catTitle:"Projets à programmer",
-    tiers:[{name:"Salle Découverte",min:0},{name:"Salle Active",min:1000},{name:"Salle Programmée",min:2500},{name:"Salle Référente",min:5000}],
-    rewards:[{ico:"i-film",cost:200,t:"Sélection perso"},{ico:"i-hourglass",cost:300,t:"Résa prioritaire"},{ico:"i-coins",cost:800,t:"Commission 18%"},{ico:"i-star",cost:1200,t:"Exclusivité 30 j"}],
-    convertSub:"On t'envoie une sélection de projets taillés pour ta salle.",
-    form:{kicker:"Espace diffuseur / salle",title:"Trouve ton prochain film",sub:"On t'envoie une sélection de projets pour ta ligne éditoriale.",org:"Nom de la salle",cta:"Trouver un projet",convertCta:"Recevoir ma sélection",done:"On t'envoie une sélection de projets pour ta salle."} },
-};
-const EARN_TABLE = [["Jouer à CinéMatch",150],["Laisser ses coordonnées",100],["Programmer un film",800],["Mise en relation",300],["Séance + réalisateur",1000],["2ᵉ film programmé",1200]];
-
-/* ============================================================ ÉTAT ============================================================ */
-const STORE_KEY="lumiere-locale-v2";
-const state={role:"real",points:0,placement:{}};
-function save(){try{localStorage.setItem(STORE_KEY,JSON.stringify({role:state.role,points:state.points}))}catch(e){}}
-function load(){try{const r=JSON.parse(localStorage.getItem(STORE_KEY)||"{}");if(r.role&&ROLES[r.role])state.role=r.role;if(typeof r.points==="number")state.points=r.points}catch(e){}}
-
-const $=(s,r=document)=>r.querySelector(s);
-const $$=(s,r=document)=>[...r.querySelectorAll(s)];
-const film=id=>FILMS.find(f=>f.id===id);
-function currentTier(){let t=ROLES[state.role].tiers[0];for(const x of ROLES[state.role].tiers)if(state.points>=x.min)t=x;return t}
-function nextTier(){return ROLES[state.role].tiers.find(x=>x.min>state.points)||null}
-
-/* ============================================================ RENDER ============================================================ */
-function renderCatalogue(){
-  const placed=new Set(Object.values(state.placement));
-  $("#catalogue").innerHTML=FILMS.map(f=>`
-    <article class="teaser ${placed.has(f.id)?'placed':''}" draggable="true" data-id="${f.id}" tabindex="0" role="button" aria-label="${f.title}. Clique puis choisis une salle.">
-      <div class="poster" style="background-image:url('${f.img}')">
-        <span class="badge">${f.badge}</span>
-        <span class="grab-hint"><svg><use href="#i-grab"/></svg></span>
-        <div class="ov"><div class="title">${f.title}</div><div class="meta">${f.genre}</div>
-          <div class="tags">${f.tags.map(t=>`<span class="tag">${tagLabel(t)}</span>`).join("")}</div>
-        </div>
-      </div>
-    </article>`).join("");
-  wireTeasers();
-}
-// film "actif" pour visualiser le matching : celui sélectionné, sinon le film déjà posé dans la salle
-function renderSalles(){
-  const sel = selectedId ? film(selectedId) : null;
-  $("#salles").innerHTML=SALLES.map(s=>{
-    const fid=state.placement[s.id], f=fid?film(fid):null;
-    const refFilm = sel || f; // ce qui sert à colorer la phrase
-    const sayHtml = `<p class="say">${s.say.map(part=>{
-      if(typeof part === "string") return part;
-      const ok = refFilm && refFilm.tags.includes(part.t);
-      return `<span class="kw ${ok?'match':''}">${part.w}</span>`;
-    }).join("")}</p>`;
-    const inner=f?`<div class="placed-card" style="background-image:url('${f.img}')">
-        <button class="rm" data-remove="${s.id}" aria-label="Retirer"><svg><use href="#i-x"/></svg></button>
-        <div class="info"><div class="t">${f.title}</div><div class="g">${f.genre}</div></div></div>`
-      :`<div class="slot">Dépose un film ici</div>`;
-    return `<div class="salle ${f?'full':''}" data-salle="${s.id}">
-      <h3><svg><use href="#${s.icon}"/></svg> ${s.name}</h3>${sayHtml}${inner}</div>`;
-  }).join("");
-  wireSalles();
-  $("#validateBtn").disabled=Object.keys(state.placement).length!==SALLES.length;
-}
-
-/* ============================================================ DND + clic ============================================================ */
-let dragId=null, selectedId=null;
-function placeFilm(sid,fid){for(const k of Object.keys(state.placement))if(state.placement[k]===fid)delete state.placement[k];state.placement[sid]=fid;selectedId=null;hideResult();renderCatalogue();renderSalles()}
-function removeFromSalle(sid){delete state.placement[sid];hideResult();renderCatalogue();renderSalles()}
-function wireTeasers(){$$(".teaser").forEach(el=>{const id=el.dataset.id;
-  el.addEventListener("dragstart",e=>{dragId=id;el.classList.add("dragging");e.dataTransfer.setData("text/plain",id);e.dataTransfer.effectAllowed="move"});
-  el.addEventListener("dragend",()=>{el.classList.remove("dragging");dragId=null});
-  const pick=()=>{selectedId=(selectedId===id)?null:id;$$(".teaser").forEach(t=>t.classList.toggle("selected",t.dataset.id===selectedId));renderSalles()};
-  el.addEventListener("click",pick);
-  el.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();pick()}});
-})}
-function wireSalles(){$$(".salle").forEach(z=>{const sid=z.dataset.salle;
-  z.addEventListener("dragover",e=>{e.preventDefault();z.classList.add("over")});
-  z.addEventListener("dragleave",()=>z.classList.remove("over"));
-  z.addEventListener("drop",e=>{e.preventDefault();z.classList.remove("over");const id=dragId||e.dataTransfer.getData("text/plain");if(id)placeFilm(sid,id)});
-  z.addEventListener("click",e=>{if(e.target.closest(".rm"))return;if(selectedId)placeFilm(sid,selectedId)});
-});$$("[data-remove]").forEach(b=>b.addEventListener("click",e=>{e.stopPropagation();removeFromSalle(b.dataset.remove)}))}
-
-/* ============================================================ SCORE ============================================================ */
-function computeScore(){let t=0;for(const s of SALLES){const fid=state.placement[s.id];if(!fid)continue;const f=film(fid);const ov=f.tags.filter(x=>s.likes.includes(x)).length;t+=Math.min(33,8+ov*9)}return Math.round(Math.min(100,t+1))}
-function verdictFor(s){if(s>=85)return "Programmation magistrale — chaque film trouve son public. Salles complètes.";if(s>=65)return "Belle prog ! Les correspondances tiennent, l'audience suit.";if(s>=45)return "Correct, mais certains films rament. Tente d'autres combinaisons.";return "Risqué : plusieurs films mal placés. Re-matche pour booster l'audience."}
-let resultShown=false;
-function validate(){const score=computeScore();const gained=150+Math.round(score*1.5);
-  $("#result").classList.add("show");$("#verdict").textContent=verdictFor(score);$("#ptsWon").textContent=`+${gained} points fidélité`;
-  resultShown=true;animateNumber($("#scoreVal"),0,score,850);requestAnimationFrame(()=>$("#scoreGauge").style.width=score+"%");
-  addPoints(gained,false);if(score>=80)burstConfetti();
-  $("#result").scrollIntoView({behavior:"smooth",block:"center"});showSticky()}
-function hideResult(){if(!resultShown)return;$("#result").classList.remove("show");$("#scoreGauge").style.width="0%";resultShown=false}
-
-/* ============================================================ POINTS ============================================================ */
-function addPoints(n,silent){const before=currentTier().name;state.points+=n;save();renderHud();if(!silent)toast(`+${n} points`);const after=currentTier().name;if(after!==before)setTimeout(()=>{toast(`🏆 Niveau : ${after}`);burstConfetti()},700)}
-function renderHud(){const tier=currentTier(),next=nextTier();
-  $("#tierName").textContent=tier.name;$("#ptsNow").textContent=state.points.toLocaleString("fr-FR");$("#hudMiniPts").textContent=state.points.toLocaleString("fr-FR");
-  let pct,from,to;
-  if(next){const span=next.min-tier.min;pct=Math.max(0,Math.min(100,((state.points-tier.min)/span)*100));from=tier.name;to=`${(next.min-state.points).toLocaleString("fr-FR")} pts → ${next.name}`}
-  else{pct=100;from=tier.name;to="Niveau max ✦"}
-  $("#lvlBar").style.width=pct+"%";$("#lvlFrom").textContent=from;$("#lvlTo").textContent=to;
-  $("#rewardStrip").innerHTML=ROLES[state.role].rewards.map(r=>{const u=state.points>=r.cost;
-    return `<div class="rwd ${u?'unlocked':''}"><div class="ic"><svg><use href="#${u?'i-check':r.ico}"/></svg></div><div class="t">${r.t}</div><div class="cost">${u?'Débloqué':r.cost+' pts'}</div></div>`}).join("")}
-
-/* ============================================================ ROLE ============================================================ */
-function setRole(key){state.role=key;save();const r=ROLES[key];
-  $("#roleReal").classList.toggle("active",key==="real");$("#roleDiff").classList.toggle("active",key==="diff");
-  $("#roleReal").setAttribute("aria-selected",key==="real");$("#roleDiff").setAttribute("aria-selected",key==="diff");
-  moveGlider();$("#roleDesc").innerHTML=r.desc;$("#catTitle").textContent=r.catTitle;
-  $("#formKicker").textContent=r.form.kicker;$("#modalTitle").textContent=r.form.title;$("#formSub").textContent=r.form.sub;
-  $("#orgLabel").textContent=r.form.org;$("#formCtaTxt").textContent=r.form.cta;$("#formDoneMsg").textContent=r.form.done;
-  $("#convertSub").textContent=r.convertSub;$("#convertCta").textContent=r.form.convertCta;
-  $("#stickyTitle").textContent=key==="real"?"Prêt·e à diffuser ton film ?":"Prêt·e à programmer ?";
-  renderHud()}
-function moveGlider(){const a=$(".role-toggle button.active"),g=$("#glider");if(!a)return;g.style.width=a.offsetWidth+"px";g.style.transform=`translateX(${a.offsetLeft-5}px)`}
-
-function renderEarn(){$("#earnTable").innerHTML=EARN_TABLE.map(([l,p])=>`<span class="chip"><span class="label">${l}</span><span class="pts">${p}</span></span>`).join("")}
-
-/* ============================================================ MODAL CONTACT ============================================================ */
-let lastFocus=null;
-function openModal(){lastFocus=document.activeElement;$("#modalBack").classList.add("show");$("#modalLive").style.display="";$("#formDone").style.display="none";setTimeout(()=>$("#f-name").focus(),80)}
-function closeModal(){$("#modalBack").classList.remove("show");if(lastFocus)lastFocus.focus()}
-function wireContact(){
-  ["navCta","stickyBtn","convertBtn"].forEach(id=>$("#"+id).addEventListener("click",openModal));
-  $("#modalClose").addEventListener("click",closeModal);
-  $("#modalBack").addEventListener("click",e=>{if(e.target===$("#modalBack"))closeModal()});
-  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("#modalBack").classList.contains("show"))closeModal()});
-  $("#contactForm").addEventListener("submit",e=>{e.preventDefault();
-    const name=$("#f-name").value.trim(),email=$("#f-email").value.trim();
-    if(!name){$("#f-name").focus();return}
-    if(!email||!/^\S+@\S+\.\S+$/.test(email)){$("#f-email").focus();return}
-    $("#modalLive").style.display="none";$("#formDone").style.display="";
-    addPoints(100,true);toast("+100 points · coordonnées enregistrées");burstConfetti();
-    // PROTOTYPE — brancher ici l'envoi réel ou la redirection :
-    // window.location.href = state.role==="real" ? "/contact-realisateur" : "/catalogue-diffuseur";
-  })}
-
-/* ============================================================ STICKY ============================================================ */
-let stickyShown=false;
-function showSticky(){if(stickyShown)return;stickyShown=true;$("#stickyCta").classList.add("show")}
-window.addEventListener("scroll",()=>{if(window.scrollY>520)showSticky()},{passive:true});
-
-/* ============================================================ FX ============================================================ */
-let toastTimer;
-function toast(m){$("#toastTxt").textContent=m;$("#toast").classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>$("#toast").classList.remove("show"),2600)}
-function animateNumber(el,from,to,dur){const start=performance.now();function step(now){const p=Math.min(1,(now-start)/dur);const e=1-Math.pow(1-p,3);el.textContent=Math.round(from+(to-from)*e);if(p<1)requestAnimationFrame(step)}requestAnimationFrame(step)}
-function burstConfetti(){const c=["#ffc83d","#ffe6a3","#46e0a8","#8a9bff","#ff5d7a","#b06bff"];for(let i=0;i<30;i++){const d=document.createElement("div");d.className="confetti";d.style.left=(45+Math.random()*10)+"vw";d.style.background=c[i%c.length];document.body.appendChild(d);const dx=(Math.random()-.5)*60,dy=60+Math.random()*40,rot=Math.random()*720;d.animate([{transform:"translate(0,0) rotate(0)",opacity:1},{transform:`translate(${dx}vw,${dy}vh) rotate(${rot}deg)`,opacity:0}],{duration:1400+Math.random()*700,easing:"cubic-bezier(.2,.7,.3,1)"});setTimeout(()=>d.remove(),2200)}}
-
-/* ============================================================ INIT ============================================================ */
-function init(){
-  load();renderEarn();renderCatalogue();renderSalles();setRole(state.role);renderHud();wireContact();
-  $("#roleReal").addEventListener("click",()=>setRole("real"));
-  $("#roleDiff").addEventListener("click",()=>setRole("diff"));
-  $("#validateBtn").addEventListener("click",validate);
-  $("#resetBtn").addEventListener("click",()=>{state.placement={};hideResult();renderCatalogue();renderSalles();toast("Prog réinitialisée")});
-  window.addEventListener("resize",moveGlider);requestAnimationFrame(moveGlider);setTimeout(moveGlider,60);
-}
-init();
-</script>
+<script src="app.js"></script>
 </body>
 </html>
